@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using MyBooks.Data.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyBooks.Data.Services;
 using MyBooks.Data.ViewModels;
 
@@ -35,6 +33,12 @@ namespace MyBooks.Controllers
         {
             _booksService.AddBook(book);
             return Ok();
+        }
+        [HttpPut("update-book-by-id/{id}")]
+        public IActionResult UpdateBookById(int id, [FromBody] BookVm book)
+        {
+            var uodateBook = _booksService.UpdateBookById(id, book);
+            return Ok(uodateBook);
         }
     }
 }
