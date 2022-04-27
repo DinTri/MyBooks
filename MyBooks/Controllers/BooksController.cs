@@ -28,17 +28,23 @@ namespace MyBooks.Controllers
             return Ok(book);
         }
 
-        [HttpPost]
+        [HttpPost("add-book-with-authors")]
         public IActionResult AddBook([FromBody] BookVm book)
         {
-            _booksService.AddBook(book);
+            _booksService.AddBookWithAuthors(book);
             return Ok();
         }
         [HttpPut("update-book-by-id/{id}")]
         public IActionResult UpdateBookById(int id, [FromBody] BookVm book)
         {
-            var uodateBook = _booksService.UpdateBookById(id, book);
-            return Ok(uodateBook);
+            var updateBook = _booksService.UpdateBookById(id, book);
+            return Ok(updateBook);
+        }
+        [HttpDelete("delete-book-by-id/{id}")]
+        public IActionResult DeleteBookById(int id)
+        {
+            _booksService.DeleteBookById(id);
+            return Ok();
         }
     }
 }
