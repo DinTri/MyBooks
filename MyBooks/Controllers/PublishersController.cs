@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyBooks.Data.Models;
 using MyBooks.Data.Services;
 using MyBooks.Data.ViewModels;
 using MyBooks.Exceptions;
@@ -10,14 +9,30 @@ namespace MyBooks.Controllers
     [ApiController]
     public class PublishersController : ControllerBase
     {
-        private readonly PublishersService? _publishersService;
-        public PublishersController(PublishersService? publishersService)
+        private readonly PublishersService _publishersService;
+        private readonly ILogger<PublishersController> _logger;
+        public PublishersController(PublishersService publishersService, ILogger<PublishersController> logger)
         {
             _publishersService = publishersService;
+            _logger = logger;
         }
+        [HttpGet("get-all-publishers")]
+        public IActionResult GetAllPublishers(string sortBy, string searchString, int pageSize)
+        {
+            try
+            {
+                _logger.LogInformation("This is a log in GetAllPublishers");
+                var _result = _publishersService.GetAllPublishers(sortBy, searchString, pageSize);
+                return Ok(_result);
+            }
+            catch (Exception)
+            {
 
+                return BadRequest("Sorry we could not load the pblishers");
+            }
+        }
         [HttpPost("add-publisher")]
-        public IActionResult? AddPublisher([FromBody] PublisherVm publisher)
+        public IActionResult AddPublisher([FromBody] PublisherVm publisher)
         {
             try
             {
@@ -38,13 +53,12 @@ namespace MyBooks.Controllers
         }
 
         [HttpGet("get-publisher-by-id/{id}")]
-        public ActionResult<Publisher> GetPublisherById(int id)
+        public IActionResult GetPublisherById(int id)
         {
             var _response = _publishersService.GetPublisherById(id);
             if (_response != null)
             {
-                //return Ok(_response);
-                return _response;
+                return Ok(_response);
             }
             else
             {

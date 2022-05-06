@@ -5,14 +5,14 @@ namespace MyBooks.Data.Services
 {
     public class AuthorsService
     {
-        private readonly AppDbContext? _context;
+        private readonly AppDbContext _context;
 
-        public AuthorsService(AppDbContext? context)
+        public AuthorsService(AppDbContext context)
         {
             _context = context;
         }
 
-        public void AddAuthor(AuthorVm? author)
+        public void AddAuthor(AuthorVm author)
         {
             var _author = new Author()
             {

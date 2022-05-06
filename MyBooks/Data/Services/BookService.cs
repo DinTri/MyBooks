@@ -5,22 +5,22 @@ namespace MyBooks.Data.Services
 {
     public class BookService
     {
-        private readonly AppDbContext? _context;
+        private readonly AppDbContext _context;
 
-        public BookService(AppDbContext? context)
+        public BookService(AppDbContext context)
         {
             _context = context;
         }
-        public void AddBookWithAuthors(BookVm? book)
+        public void AddBookWithAuthors(BookVm book)
         {
             var _book = new Book()
             {
-                Title = book?.Title,
+                Title = book.Title,
                 Description = book?.Description,
                 IsRead = book.IsRead,
                 DateRead = book.IsRead ? book.DateRead.Value : null,
-                Rate = book.IsRead ? book.Rate.Value : null,
-                Genre = book?.Genre,
+                Rate = book.IsRead ? book.Rate : 0,
+                Genre = book.Genre,
                 CoverUrl = book?.CoverUrl,
                 DateAdded = DateTime.Now,
                 PublisherId = book.PublisherId
@@ -29,13 +29,13 @@ namespace MyBooks.Data.Services
             _context?.SaveChanges();
             foreach (var id in book.AuthorIds)
             {
-                var book_author = new Book_Author()
+                var book_author = new BookAuthor()
                 {
                     BookId = _book.Id,
                     AuthorId = id,
                 };
-                _context.Book_Authors.Add(book_author);
-                _context.SaveChanges();
+                _context?.Book_Authors.Add(book_author);
+                _context?.SaveChanges();
             }
         }
 
@@ -47,8 +47,8 @@ namespace MyBooks.Data.Services
                 Title = book.Title,
                 Description = book.Description,
                 IsRead = book.IsRead,
-                DateRead = book.IsRead ? book.DateRead.Value : null,
-                Rate = book.IsRead ? book.Rate.Value : null,
+                DateRead = book.IsRead ? book.DateRead : null,
+                Rate = book.IsRead ? book.Rate : 0,
                 Genre = book.Genre,
                 CoverUrl = book.CoverUrl,
                 PublisherName = book.Publisher.Name,
@@ -66,7 +66,7 @@ namespace MyBooks.Data.Services
                 _book.Description = book.Description;
                 _book.IsRead = book.IsRead;
                 _book.DateRead = book.IsRead ? book.DateRead.Value : null;
-                _book.Rate = book.IsRead ? book.Rate.Value : null;
+                _book.Rate = book.IsRead ? book.Rate : 0;
                 _book.Genre = book?.Genre;
                 _book.CoverUrl = book?.CoverUrl;
                 _context.SaveChanges();

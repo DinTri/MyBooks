@@ -1,19 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using MyBooks.Data;
 using MyBooks.Data.Services;
-using MyBooks.Exceptions;
+using Serilog;
+
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.ConfigureLogging(logging =>
+builder.Logging.ClearProviders();
+try
 {
-    logging.ClearProviders();
-    logging.AddConsole();
-});
-ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
+    builder.Host.UseSerilog((context, services, configuration) => configuration
+            .WriteTo.Console()
+            .ReadFrom.Configuration(context.Configuration)
+            .ReadFrom.Services(services));
+}
+catch (Exception ex)
 {
-    builder.AddConsole();
-    builder.AddDebug();
-});
+    Log.Fatal(ex, "Error during initialization");
+}
+finally
+{
+    Log.Information("App finished");
+    Log.CloseAndFlush();
+}
+
 string ConnectionString = builder.Configuration.GetConnectionString("DafaultConnectionString");
 // Add services to the container.
 
@@ -22,7 +31,15 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Conn
 builder.Services.AddTransient<BookService>();
 builder.Services.AddTransient<AuthorsService>();
 builder.Services.AddTransient<PublishersService>();
+builder.Services.AddTransient<LogsService>();
 
+builder.Services.AddApiVersioning(config =>
+{
+    config.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+    config.AssumeDefaultVersionWhenUnspecified = true;
+    //config.ApiVersionReader = new HeaderApiVersionReader("custom-version-header");
+    //config.ApiVersionReader = new MediaTypeApiVersionReader();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -37,11 +54,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseSerilogRequestLogging();
 app.UseAuthorization();
 //Error Handling
-app.ConfigureBuildInExceptionHandler(loggerFactory);
-//app.ConfigureCustomExceptionHandler();
+//app.ConfigureBuildInExceptionHandler(loggerFactory);
 app.MapControllers();
-//AddDbInitializer.Seed(app);
 app.Run();

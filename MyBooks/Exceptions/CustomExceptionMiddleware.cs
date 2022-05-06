@@ -18,13 +18,13 @@ namespace MyBooks.Exceptions
             {
                 await _next(httpContext);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext);
             }
         }
 
-        private Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
+        private static Task HandleExceptionAsync(HttpContext httpContext)
         {
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             httpContext.Response.ContentType = "application/json";

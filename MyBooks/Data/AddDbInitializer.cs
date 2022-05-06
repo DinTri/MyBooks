@@ -2,7 +2,7 @@
 
 namespace MyBooks.Data
 {
-    public class AddDbInitializer
+    public static class AddDbInitializer
     {
         public static void Seed(IApplicationBuilder applicationBuilder)
         {

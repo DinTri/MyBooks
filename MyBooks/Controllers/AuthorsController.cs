@@ -8,8 +8,8 @@ namespace MyBooks.Controllers
     [ApiController]
     public class AuthorsController : ControllerBase
     {
-        private readonly AuthorsService? _authorsService;
-        public AuthorsController(AuthorsService? authorsService)
+        private readonly AuthorsService _authorsService;
+        public AuthorsController(AuthorsService authorsService)
         {
             _authorsService = authorsService;
         }
